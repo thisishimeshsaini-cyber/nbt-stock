@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Log in · NBT Stock Room</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="mono-mark" aria-hidden="true"><span>N</span><span>B</span><span>T</span><span></span></div>
+      <div><h1>NBT Stock Room</h1><p>North Brisbane Tiling · team login</p></div>
+    </div>
+  </header>
+  <div class="gate">
+    <div class="tabs2" role="tablist">
+      <button type="button" id="tIn" aria-pressed="true">Log in</button>
+      <button type="button" id="tUp" aria-pressed="false">Sign up</button>
+    </div>
+    <form id="fIn" novalidate>
+      <label>Email<input id="inEmail" name="email" type="email" autocomplete="email" required></label>
+      <label>Password<input id="inPass" name="password" type="password" autocomplete="current-password" required></label>
+      <p class="err" data-err></p>
+      <button class="btn primary" type="submit">Log in</button>
+    </form>
+    <form id="fUp" novalidate hidden>
+      <div class="grid2">
+        <label>First name<input id="upFirst" name="firstName" autocomplete="given-name" required></label>
+        <label>Last name<input id="upLast" name="lastName" autocomplete="family-name"></label>
+      </div>
+      <label>Email<input id="upEmail" name="email" type="email" autocomplete="email" required></label>
+      <label>Choose a password<input id="upPass" name="password" type="password" autocomplete="new-password" minlength="6" required></label>
+      <p class="err" data-err></p>
+      <button class="btn primary" type="submit">Create account</button>
+    </form>
+    <form id="fCode" novalidate hidden>
+      <p>We emailed you a code. Enter it to finish signing up.</p>
+      <label>Code<input id="code" name="code" inputmode="numeric" autocomplete="one-time-code" required></label>
+      <p class="err" data-err></p>
+      <button class="btn primary" type="submit">Confirm</button>
+    </form>
+    <div id="approval" hidden><p>Thanks. Your account is waiting for the admin to approve it. You'll be able to log in once it's approved.</p></div>
+  </div>
+</div>
+<script type="module" src="/login.js"></script>
+</body>
+</html>

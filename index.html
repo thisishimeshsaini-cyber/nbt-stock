@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>NBT Stock Room</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+            <div id="mark" class="mono-mark" aria-hidden="true"><span>N</span><span>B</span><span>T</span><span></span></div>
+      <div>
+        <h1>NBT Stock Room</h1>
+        <p>North Brisbane Tiling · shed, van and site stock</p>
+      </div>
+    </div>
+    <div class="who"><span id="who"></span><button class="linkbtn" id="accessBtn" type="button">Access</button><button class="linkbtn" id="logoutBtn" type="button" hidden>Log out</button></div>
+  </header>
+
+  <div id="status" class="note" hidden></div>
+  <div id="gate" class="gate"><h2>Loading…</h2></div>
+  <div id="app" hidden style="display:contents">
+
+  <div class="locs" id="locs" role="toolbar" aria-label="Choose location"></div>
+
+  <div class="strip">
+    <div><small>Products</small><b id="sTotal">–</b></div>
+    <div><small>In stock</small><b id="sOk">–</b></div>
+    <div class="w"><small>Running low</small><b id="sLow">–</b></div>
+    <div class="x"><small>Out of stock</small><b id="sOut">–</b></div>
+  </div>
+
+  <div class="toolbar">
+    <input id="q" class="search" type="search" placeholder="Search grout, silicone, 20 kg…" aria-label="Search stock">
+    <button id="addBtn" class="btn primary" type="button" hidden>+ Add product</button>
+    <button id="sitesBtn" class="btn" type="button" hidden>Manage sites</button>
+      </div>
+  <div class="chips" id="chips" role="toolbar" aria-label="Filter by category"></div>
+
+  <div id="board" class="board" hidden></div>
+  <div id="empty" class="empty">
+    <h2>Loading stock…</h2>
+    <p>Glue, grout, silicone, sand, epoxy and waterproofing for the shed, van and every site will show here.</p>
+  </div>
+
+  <section>
+    <h2>Recent changes</h2>
+    <ul class="log" id="log"><li><span class="txt">No changes recorded yet.</span></li></ul>
+  </section>
+
+  </div>
+  <p class="foot">Everyone logged in sees the same stock. Only the admin can change it.</p>
+</div>
+
+<!-- Product -->
+<dialog id="dlg"><form class="dlg" id="form" method="dialog">
+  <h2 id="dlgTitle">Add product</h2>
+  <label>Product name<input id="fName" required maxlength="80" placeholder="e.g. Mapei Ultracolor Plus FA grout 5 kg"></label>
+  <div class="grid2">
+    <label>Category<select id="fCat"></select></label>
+    <label>Unit<select id="fUnit">
+      <option>bags</option><option>tubes</option><option>buckets</option><option>kits</option><option>litres</option><option>boxes</option><option>rolls</option><option>m²</option><option>each</option>
+    </select></label>
+    <label>Sub-type is called<select id="fVL"><option>Colour</option><option>Size</option><option>Type</option><option>Finish</option></select></label>
+    <label>Reorder each one at<input id="fMin" type="number" inputmode="decimal" min="0" step="any" value="2" required></label>
+  </div>
+  <fieldset style="display:flex;flex-direction:column"><legend id="vLegend">Colours</legend>
+    <div class="vedit" id="vEdit"></div>
+    <div class="addv"><input id="vNew" maxlength="40" placeholder="e.g. 113 Cement Grey" aria-label="New sub-type name"><button type="button" class="btn" id="vAdd">+ Add</button></div>
+    <p style="margin:0;font-size:13px;color:var(--muted)">Leave empty if this product has no colours or sizes. Counts are set on the product card.</p>
+  </fieldset>
+  <label>Notes<textarea id="fNotes" rows="2" maxlength="300" placeholder="Supplier, batch no., anything the team should know"></textarea></label>
+  <div id="delConfirm" class="confirm" hidden>Delete this product and all its stock?
+    <button type="button" class="btn danger solid" id="delYes">Delete</button>
+    <button type="button" class="btn" id="delNo">Keep</button></div>
+  <div class="row">
+    <button type="button" class="btn danger spacer" id="delBtn" hidden>Delete</button>
+    <button type="button" class="btn" id="cancelBtn">Cancel</button>
+    <button type="submit" class="btn primary" id="saveBtn">Save</button>
+  </div>
+</form></dialog>
+
+<!-- Move -->
+<dialog id="mvDlg"><form class="dlg" id="mvForm" method="dialog">
+  <h2>Move stock</h2>
+  <p id="mvItem"></p>
+  <label id="mvVarL">Colour<select id="mvVar"></select></label>
+  <div class="grid2">
+    <label>From<select id="mvFrom"></select></label>
+    <label>To<select id="mvTo"></select></label>
+  </div>
+  <label>How many<input id="mvQty" type="number" inputmode="decimal" min="0" step="any" value="1" required></label>
+  <p id="mvHint"></p>
+  <div class="row">
+    <button type="button" class="btn" id="mvCancel">Cancel</button>
+    <button type="submit" class="btn primary" id="mvSave">Move</button>
+  </div>
+</form></dialog>
+
+<!-- Sites -->
+<dialog id="siteDlg"><div class="dlg">
+  <h2>Manage sites</h2>
+  <p>Shed and Van stay as main locations. Add a site when a job starts and remove it when the stock is gone.</p>
+  <ul class="sitelist" id="siteList"></ul>
+  <form id="siteForm" class="row" style="justify-content:stretch">
+    <input id="siteName" maxlength="50" placeholder="New site, e.g. 12 Smith St, North Lakes" aria-label="New site name" style="flex:1 1 200px;min-width:0;padding:12px 14px;border:1px solid var(--grout);border-radius:var(--r);background:var(--bg);font-size:16px">
+    <button class="btn primary" type="submit">Add site</button>
+  </form>
+  <p id="siteMsg"></p>
+  <div class="row"><button class="btn" type="button" id="siteClose">Done</button></div>
+</div></dialog>
+
+<!-- Access -->
+<dialog id="accDlg"><div class="dlg">
+  <h2>Access &amp; login</h2>
+  <p id="accWho"></p>
+  <p>Everyone logs in on this site with their own email and password. Team members create an account with <b>Sign up</b>, then they can see live stock.</p>
+  <p>Only the admin can add, change, move or delete stock. To make someone else an admin, ask for it to be set up for their account.</p>
+  <div class="row"><button class="btn primary" type="button" id="accClose">Got it</button></div>
+</div></dialog>
+
+<script type="module" src="/app.js"></script>
+</body>
+</html>
