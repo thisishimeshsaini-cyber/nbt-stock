@@ -1,4 +1,5 @@
-import { subscribeMember, getMemberState, logout } from "/js/wix/member-store.js";
+import { subscribeMember, getMemberState } from "/js/wix/member-store.js";
+import { clearTokens } from "/js/wix/client.js";
 import { queryItems, insertItem, patchItemFields, removeItem, getItemById } from "/js/wix/items.js";
 
 const C = { items: "StockItems", sites: "StockSites", act: "StockActivity", set: "StockSettings" };
@@ -367,7 +368,7 @@ $("accessBtn").onclick = () => $("accDlg").showModal();
 $("accClose").onclick = () => $("accDlg").close();
 $("addBtn").onclick = () => openDlg(null);
 $("q").addEventListener("input", () => render());
-$("logoutBtn").onclick = () => logout("/login.html").catch(() => {});
+$("logoutBtn").onclick = () => { try { clearTokens(); } catch (_) {} location.replace("/login.html"); };
 
 async function loadStarter() {
   status("Adding starter list…");
