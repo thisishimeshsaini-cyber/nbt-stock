@@ -154,3 +154,13 @@ legend{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercas
 .tabs2 button{flex:1;padding:10px;border-radius:var(--r);border:1px solid var(--grout);background:var(--bg);font-weight:600}
 .tabs2 button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 a{color:var(--accent)}
+
+.stgrid{display:flex;flex-direction:column;gap:12px;max-height:55vh;overflow-y:auto}
+.stgroup{border:1px solid var(--grout);border-radius:var(--r);padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.stgroup h3{margin:0;font-size:15px}
+.strow{display:flex;align-items:center;gap:8px}
+.strow span{flex:1;min-width:0;font-size:14px}
+.strow input{width:84px;padding:10px;border:1px solid var(--grout);border-radius:var(--r);background:var(--bg);font-family:var(--mono);font-size:18px;text-align:right}
+.strow button{width:44px;height:44px;border-radius:var(--r);border:1px solid var(--grout);background:var(--bg);font-family:var(--mono);font-size:20px;font-weight:600}
+.btn.small{padding:8px 12px;font-size:14px}
+.hint{font-size:12px;color:var(--muted)}

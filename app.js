@@ -191,6 +191,8 @@ function render() {
     const foot = document.createElement("div"); foot.className = "t-foot";
     const m1 = document.createElement("span"); m1.textContent = it.updatedAt ? `Updated ${ago(it.updatedAt)}` : ""; foot.append(m1);
     if (isAdmin) { const a = document.createElement("div"); a.className = "t-act";
+      const up = document.createElement("button"); up.type = "button"; up.className = "btn primary small"; up.textContent = "Update stock"; up.onclick = () => openStock(it);
+      a.append(up);
       const mv = document.createElement("button"); mv.type = "button"; mv.textContent = "Move"; mv.onclick = () => openMove(it);
       const ed = document.createElement("button"); ed.type = "button"; ed.textContent = "Edit"; ed.onclick = () => openDlg(it);
       a.append(mv, ed); foot.append(a); }
@@ -304,6 +306,57 @@ $("form").addEventListener("submit", async (ev) => {
     $("dlg").close(); status(""); await refresh();
   } catch (e) { $("dlg").close(); refused(e); }
   $("saveBtn").disabled = false;
+});
+
+/* ---------- update stock dialog ---------- */
+let stocking = null;
+function openStock(it) {
+  stocking = it; $("stItem").textContent = it.name; $("stMsg").textContent = "";
+  const g = $("stGrid"); g.innerHTML = "";
+  const plain = isPlain(it);
+  const locs = loc !== "all" ? sortedSites().filter((s) => s._id === loc).concat(sortedSites().filter((s) => s._id !== loc)) : sortedSites();
+  vlist(it).forEach((v) => {
+    const box = document.createElement("div"); box.className = "stgroup";
+    if (!plain) { const h = document.createElement("h3"); h.textContent = v.name; box.append(h); }
+    locs.forEach((si) => {
+      const r = document.createElement("div"); r.className = "strow";
+      const lab = document.createElement("span"); lab.textContent = `${si.name} (${it.unit})`;
+      const inp = document.createElement("input"); inp.type = "number"; inp.min = "0"; inp.step = "any"; inp.inputMode = "decimal";
+      inp.value = fmt(qty(it, v.id, si._id)); inp.dataset.v = v.id; inp.dataset.s = si._id; inp.setAttribute("aria-label", `${v.name === STD ? "" : v.name + " "}${si.name}`);
+      const minus = document.createElement("button"); minus.type = "button"; minus.textContent = "−"; minus.setAttribute("aria-label", "One less");
+      minus.onclick = () => { inp.value = String(Math.max(0, (parseFloat(inp.value) || 0) - 1)); };
+      const plus = document.createElement("button"); plus.type = "button"; plus.textContent = "+"; plus.setAttribute("aria-label", "One more");
+      plus.onclick = () => { inp.value = String((parseFloat(inp.value) || 0) + 1); };
+      r.append(lab, minus, inp, plus); box.append(r);
+    });
+    g.append(box);
+  });
+  $("stDlg").showModal();
+}
+$("stCancel").onclick = () => $("stDlg").close();
+$("stForm").addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  const it = stocking; if (!it) return;
+  $("stSave").disabled = true; $("stMsg").textContent = "";
+  try {
+    const fresh = norm((await getItemById(C.items, it._id)) || it);
+    let v = clone(fresh.variants); const changes = [];
+    $("stGrid").querySelectorAll("input").forEach((inp) => {
+      const val = Math.max(0, parseFloat(inp.value) || 0), vid = inp.dataset.v, sid = inp.dataset.s;
+      const before = raw(fresh, vid, sid);
+      if (val !== before) { v = withQty({ variants: v }, vid, sid, val); changes.push({ vid, sid, before, val }); }
+    });
+    if (changes.length) {
+      await saveVariants(fresh, v);
+      for (const c of changes) logIt({ action: "adjust", item: it.name, variant: vName(fresh, c.vid), site: siteName(c.sid), delta: c.val - c.before, after: c.val });
+      status(`Saved ${changes.length} count${changes.length > 1 ? "s" : ""} for ${it.name}.`);
+    }
+    $("stDlg").close(); render();
+  } catch (e) {
+    const m = String((e && e.message) || e || "");
+    $("stMsg").textContent = /403|WDE0027|permission/i.test(m) ? "Only the admin can change stock." : "Couldn't save. Check your connection and try again.";
+  }
+  $("stSave").disabled = false;
 });
 
 /* ---------- move dialog ---------- */
